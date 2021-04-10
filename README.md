@@ -7,16 +7,27 @@ Google Calendar Python Command Line manager
 
 ## Run
 ```
-usage: python gcaltools.py [-h] [-v] {show,list} ...
+usage: gcaltools.py [-h] [-v] {add,list,show} ...
 
 positional arguments:
-  {show,list}
-    show         Displays calendar
-    list         Lists available calendars
-    show         Displays calendar
+  {add,list,show}
+    add            Add event to calendar   /!\ NOT YET IMPLEMENTED
+    list           Lists available calendars
+    show           Displays calendar
 
 optional arguments:
-  -h, --help     show this help message and exit
-  -v, --version  show program's version number and exit
+  -h, --help       show this help message and exit
+  -v, --version    show program's version number and exit
+
 
 ````
+
+## Actual state
+- [x] Listing available calendars
+- [x] Display current week events
+- [x] Display current month events
+- [x] Display events for given date
+- [x] Display events for given period
+- [ ] Create new event
+- [ ] Search for events
+- [ ] Check for overlapping events based on attendees list

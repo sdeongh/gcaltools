@@ -14,11 +14,12 @@ def cli_parser():
 
 
 def sub_parser_add(sub_parser):
-    add_parser = sub_parser.add_parser('show', help="Displays calendar")
+    add_parser = sub_parser.add_parser('add', help="Add event to calendar")
     add_parser.add_argument('calendar', type=str, help="Calendar name")
     add_parser.add_argument('title', type=str, help="Event title")
     add_parser.add_argument('start', type=str, help="Event start time, format: YYYYMMDD HH:MM")
     add_parser.add_argument('duration', type=int, help="Event duration (minutes) default: " + str(default_args['new_event_duration']), default=default_args['new_event_duration'])
+    add_parser.add_argument('attendees', type=str, help="List of emails of attendees", default="")
 
 
 def sub_parser_list(sub_parser):

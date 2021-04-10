@@ -1,5 +1,6 @@
 from googleapiclient import sample_tools
 from datetime import datetime, timedelta
+from config import DATE_FORMAT, GCAL_DATE_FORMAT
 
 
 def event_start(event):
@@ -30,14 +31,17 @@ class GoogleCalendarManager:
 
     def get_events(self, calendar_name, order_by=None, time_min=None, time_max=None, max_results=None):
         if time_max is not None:
-            time_max = (datetime.strptime(time_max, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%dT00:00:00+00:00")
+            time_max = (datetime.strptime(time_max, DATE_FORMAT) + timedelta(days=1)).strftime(GCAL_DATE_FORMAT)
         if time_min is not None:
-            time_min = datetime.strptime(time_min, "%Y-%m-%d").strftime("%Y-%m-%dT00:00:00+00:00")
+            time_min = datetime.strptime(time_min, DATE_FORMAT).strftime(GCAL_DATE_FORMAT)
         event_list = self._service.events().list(calendarId=self._get_calendar_id(calendar_name), orderBy=order_by, timeMin=time_min, timeMax=time_max, maxResults=max_results).execute()['items']
         return sorted(event_list, key=lambda e: event_start(e))
 
-    def get_calendars(self):
-        return self._calendars
+    def get_calendars(self, sort_by_summary=True):
+        if sort_by_summary:
+            return sorted(self._calendars,key=lambda c: c['summary'])
+        else:
+            return self._calendars
 
 
 if __name__ == "__main__":

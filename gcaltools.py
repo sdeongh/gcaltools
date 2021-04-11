@@ -9,8 +9,51 @@ from printer import calendar_list_printer, events_printer
 from datetime import datetime, timedelta
 from config import DATE_FORMAT
 
-if __name__ == "__main__":
 
+# Add command
+def command_add(command_args):
+    raise NotImplementedError
+
+
+# List command
+def command_list(command_args):
+    calendar_list_printer(calendar_manager.get_calendars())
+
+
+# Show command
+def command_show(command_args):
+    min_time = command_args.startDate
+
+    # Display only one day if no end date is given
+    if command_args.endDate is None:
+        max_time = min_time
+    else:
+        max_time = command_args.endDate
+
+    # Displays events for the current week
+    if command_args.w:
+        min_time = datetime.now() - timedelta(days=(datetime.now().weekday()))
+        max_time = min_time + timedelta(days=6)
+        min_time, max_time = min_time.strftime(DATE_FORMAT), max_time.strftime(DATE_FORMAT)
+
+    # Displays events for the current month
+    if command_args.m:
+        min_time = datetime.now().replace(day=1)
+        max_time = min_time.replace(month=min_time.month + 1) - timedelta(days=1)
+        min_time, max_time = min_time.strftime(DATE_FORMAT), max_time.strftime(DATE_FORMAT)
+
+    events_printer(calendar_manager.get_events(command_args.calendar, time_min=min_time, time_max=max_time, max_results=None))
+
+
+# CLI command switch
+cli_command_switch = {
+    'add': command_add,
+    'list': command_list,
+    'show': command_show,
+}
+
+
+if __name__ == "__main__":
     # Configure command line argument parser
     parser = cli_parser()
     args = parser.parse_args()
@@ -18,30 +61,5 @@ if __name__ == "__main__":
     # Create Google Calendar Manager
     calendar_manager = GoogleCalendarManager()
 
-    # Display list of all available calendars
-    if args.command == 'list':
-        calendar_list_printer(calendar_manager.get_calendars())
-
-    # Displays list of events
-    if args.command == 'show':
-        minTime = args.startDate
-
-        # Display only one day if no end date is given
-        if args.endDate is None:
-            maxTime = minTime
-        else:
-            maxTime = args.endDate
-
-        # Displays events for the current week
-        if args.w:
-            minTime = datetime.now() - timedelta(days=(datetime.now().weekday()))
-            maxTime = minTime + timedelta(days=6)
-            minTime, maxTime = minTime.strftime(DATE_FORMAT), maxTime.strftime(DATE_FORMAT)
-
-        # Displays events for the current month
-        if args.m:
-            minTime = datetime.now().replace(day=1)
-            maxTime = minTime.replace(month=minTime.month+1) - timedelta(days=1)
-            minTime, maxTime = minTime.strftime(DATE_FORMAT), maxTime.strftime(DATE_FORMAT)
-
-        events_printer(calendar_manager.get_events(args.calendar, time_min=minTime, time_max=maxTime, max_results=None))
+    # Execute function for args.command
+    cli_command_switch[args.command](args)

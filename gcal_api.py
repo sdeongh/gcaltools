@@ -39,7 +39,7 @@ class GoogleCalendarManager:
 
     def get_calendars(self, sort_by_summary=True):
         if sort_by_summary:
-            return sorted(self._calendars,key=lambda c: c['summary'])
+            return sorted(self._calendars, key=lambda c: c['summary'])
         else:
             return self._calendars
 

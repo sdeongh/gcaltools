@@ -2,7 +2,7 @@ import os
 import yaml
 from googleapiclient import sample_tools
 from datetime import datetime, timedelta
-from config import DATE_FORMAT, GCAL_DATE_FORMAT, SCOPES, USER_PREFERENCES_FILE, DATETIME_FORMAT
+from config import DATE_FORMAT, GCAL_DATE_FORMAT, SCOPES, USER_PREFERENCES_FILE, DATETIME_FORMAT, COLORS
 from pytz import timezone
 
 
@@ -95,7 +95,7 @@ class GoogleCalendarManager:
         else:
             return self._calendars
 
-    def insert_event(self, calendar_name, title, start_date, start_time, duration=None, attendees=None):
+    def insert_event(self, calendar_name, title, start_date, start_time, duration=None, attendees=None, color_name=None):
         calendar_id = self._get_calendar_id(calendar_name)
         if duration is None:
             duration = self.get_default_event_duration()
@@ -109,6 +109,9 @@ class GoogleCalendarManager:
         }
         if attendees is not None:
             body['attendees'] = [{'email': attendee} for attendee in attendees.split(',')]
+
+        if color_name is not None:
+            body['colorId'] = COLORS[color_name]
 
         self._service.events().insert(calendarId=calendar_id, body=body).execute()
 

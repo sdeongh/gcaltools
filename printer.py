@@ -15,6 +15,7 @@ def events_printer(event_list):
     print("+" + "-"*27 + "+" + "-"*27 + "+" + "-"*27)
 
     for e in event_list:
+        print(e)
         if 'date' in e['start'].keys():
             start_date = datetime.fromisoformat(e['start']['date']).strftime('%a %d %b %Y (all day)')
             end_date = datetime.fromisoformat(e['end']['date']).strftime('%a %d %b %Y (all day)')

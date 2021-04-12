@@ -13,7 +13,6 @@ from config import DATE_FORMAT
 
 # Add command
 def command_add(command_args):
-
     if command_args.calendar:
         active_calendar = command_args.calendar
     else:
@@ -27,11 +26,17 @@ def command_add(command_args):
     else:
         duration = calendar_manager.get_default_event_duration()
 
-    if args.attendees:
+    if command_args.attendees:
         attendees = command_args.attendees
     else:
         attendees = None
-    calendar_manager.insert_event(active_calendar, command_args.title, command_args.start_date, command_args.start_time, duration, attendees)
+
+    if command_args.override_color:
+        color_name = command_args.override_color
+    else:
+        color_name = None
+
+    calendar_manager.insert_event(active_calendar, command_args.title, command_args.start_date, command_args.start_time, duration, attendees, color_name)
 
 
 # List command

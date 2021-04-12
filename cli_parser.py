@@ -1,6 +1,6 @@
 import argparse
 from utils import today_date
-from config import __VERSION
+from config import __VERSION, COLORS
 
 
 def cli_parser(calendar_manager):
@@ -22,6 +22,7 @@ def sub_parser_add(sub_parser, calendar_manager):
     add_parser.add_argument('start_time', type=str, help="Event start time, format: HH:MM")
     add_parser.add_argument('-d', '--duration', type=int, help="Event duration (minutes) default: " + str(calendar_manager.get_default_event_duration()), default=calendar_manager.get_default_event_duration())
     add_parser.add_argument('-a', '--attendees', type=str, help="List of emails of attendees", default="")
+    add_parser.add_argument('-o', '--override-color', type=str, choices=[c for c in sorted(COLORS.keys())], help="List of emails of attendees", default="")
 
 
 def sub_parser_list(sub_parser, calendar_manager):

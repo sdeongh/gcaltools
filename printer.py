@@ -27,3 +27,9 @@ def events_printer(event_list):
             event_string += " - ({})".format(", ".join([att['email'] for att in e['attendees']]))
 
         print(event_string)
+
+
+def default_printer(user_preferences):
+    print('')
+    for setting in sorted(user_preferences.keys()):
+        print("{}: {}".format(setting, user_preferences[setting]))

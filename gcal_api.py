@@ -1,7 +1,10 @@
+import os
+import yaml
 from googleapiclient import sample_tools
 from datetime import datetime, timedelta
-from config import DATE_FORMAT, GCAL_DATE_FORMAT, default_args, SCOPES
+from config import DATE_FORMAT, GCAL_DATE_FORMAT, SCOPES, USER_PREFERENCES_FILE, DATETIME_FORMAT
 from pytz import timezone
+
 
 def event_start(event):
     if 'date' in event['start'].keys():
@@ -15,9 +18,55 @@ def _create_service():
 
 
 class GoogleCalendarManager:
-    def __init__(self):
-        self._service, self._flags = _create_service()
-        self._calendars = self._get_calendars()['items']
+    def __init__(self, use_api=True):
+        if use_api:
+            self._service, self._flags = _create_service()
+            self._calendars = self._get_calendars()['items']
+        self._load_user_preferences()
+
+    def _load_user_preferences(self):
+        if os.path.exists(USER_PREFERENCES_FILE):
+            with open(USER_PREFERENCES_FILE) as file:
+                self._preferences = yaml.load(file, Loader=yaml.FullLoader)
+        else:
+            self._preferences = {
+                'default_calendar': None,
+                'default_duration': 60,
+                'default_timezone': self._calendars[0]['timeZone']
+
+            }
+
+    def reload(self):
+        self._load_user_preferences()
+
+    def _save_user_preferences(self):
+        with open(USER_PREFERENCES_FILE, 'w') as file:
+            yaml.dump(self._preferences, file)
+
+    def _set_user_preference(self, setting, value):
+        self._preferences[setting] = value
+        self._save_user_preferences()
+
+    def get_default_calendar(self):
+        return self._preferences['default_calendar']
+
+    def set_default_calendar(self, calendar_name):
+        self._set_user_preference('default_calendar', calendar_name)
+
+    def get_default_event_duration(self):
+        return self._preferences['default_duration']
+
+    def set_default_event_duration(self, duration):
+        self._set_user_preference('default_duration', duration)
+
+    def get_default_timezone(self):
+        return self._preferences['default_timezone']
+
+    def set_default_timezone(self, time_zone):
+        self._set_user_preference('default_timezone', time_zone)
+
+    def get_user_preferences(self):
+        return self._preferences
 
     def _get_calendar_id(self, calendar_name):
         for cal in self._calendars:
@@ -28,6 +77,9 @@ class GoogleCalendarManager:
 
     def _get_calendars(self):
         return self._service.calendarList().list().execute()
+
+    def calender_exists(self, calendar_name):
+        return True if self._get_calendar_id(calendar_name) is not None else False
 
     def get_events(self, calendar_name, order_by=None, time_min=None, time_max=None, max_results=None):
         if time_max is not None:
@@ -43,18 +95,21 @@ class GoogleCalendarManager:
         else:
             return self._calendars
 
-    def insert_event(self, calendar_name, title, start_time, duration=default_args['new_event_duration'], attendees=None):
+    def insert_event(self, calendar_name, title, start_date, start_time, duration=None, attendees=None):
         calendar_id = self._get_calendar_id(calendar_name)
-        body_start_time = timezone(default_args['time_zone']).localize(datetime.strptime(start_time,"%Y-%m-%d %H:%M"))
+        if duration is None:
+            duration = self.get_default_event_duration()
+        body_start_time = timezone(self.get_default_timezone()).localize(datetime.strptime(' '.join((start_date, start_time)), DATETIME_FORMAT))
         body_end_time = body_start_time + timedelta(minutes=duration)
 
         body = {
             'summary': title,
-            'start': {'dateTime': body_start_time.isoformat(), 'timZone': default_args['time_zone']},
+            'start': {'dateTime': body_start_time.isoformat(), 'timZone': self.get_default_timezone()},
             'end': {'dateTime': body_end_time.isoformat()},
-            'attendees': [{'email': attendee } for attendee in attendees.split(',')]
         }
-        print(body)
+        if attendees is not None:
+            body['attendees'] = [{'email': attendee} for attendee in attendees.split(',')]
+
         self._service.events().insert(calendarId=calendar_id, body=body).execute()
 
 

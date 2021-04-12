@@ -7,12 +7,22 @@ from cli_parser import cli_parser
 from gcal_api import GoogleCalendarManager
 from printer import calendar_list_printer, events_printer
 from datetime import datetime, timedelta
-from config import DATE_FORMAT
+from config import DATE_FORMAT, default_args
 
 
 # Add command
 def command_add(command_args):
-    raise NotImplementedError
+    print(command_args)
+    if command_args.duration:
+        duration = command_args.duration
+    else:
+        duration = default_args['new_event_duration']
+
+    if args.attendees:
+        attendees = command_args.attendees
+    else:
+        attendees = None
+    calendar_manager.insert_event(command_args.calendar, command_args.title, command_args.start, duration, attendees)
 
 
 # List command

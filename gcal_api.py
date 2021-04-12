@@ -1,6 +1,6 @@
 from googleapiclient import sample_tools
 from datetime import datetime, timedelta
-from config import DATE_FORMAT, GCAL_DATE_FORMAT
+from config import DATE_FORMAT, GCAL_DATE_FORMAT, default_args, SCOPES
 
 
 def event_start(event):
@@ -11,7 +11,7 @@ def event_start(event):
 
 
 def _create_service():
-    return sample_tools.init('', 'calendar', 'v3', __doc__, __file__, scope='https://www.googleapis.com/auth/calendar.events')
+    return sample_tools.init('', 'calendar', 'v3', __doc__, __file__, scope=SCOPES)
 
 
 class GoogleCalendarManager:
@@ -42,6 +42,19 @@ class GoogleCalendarManager:
             return sorted(self._calendars, key=lambda c: c['summary'])
         else:
             return self._calendars
+
+    def insert_event(self, calendar_name, title, start_time, duration=default_args['new_event_duration'], attendees=None):
+        calendar_id = self._get_calendar_id(calendar_name)
+        body_start_time = datetime.strptime(start_time,"%Y-%m-%d %H:%M")
+        body_end_time = body_start_time + timedelta(minutes=duration)
+
+        body = {
+            'summary': title,
+            'start': {'dateTime':body_start_time.strftime(GCAL_DATE_FORMAT) },
+            'end': {'dateTime': body_end_time.strftime(GCAL_DATE_FORMAT) },
+            'attendees': {'email':attendee for attendee in attendees.split(',')}
+        }
+        self._service.events().insert(calendarId=calendar_id, body=body).execute()
 
 
 if __name__ == "__main__":

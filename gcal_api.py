@@ -1,7 +1,7 @@
 from googleapiclient import sample_tools
 from datetime import datetime, timedelta
 from config import DATE_FORMAT, GCAL_DATE_FORMAT, default_args, SCOPES
-
+from pytz import timezone
 
 def event_start(event):
     if 'date' in event['start'].keys():
@@ -45,15 +45,16 @@ class GoogleCalendarManager:
 
     def insert_event(self, calendar_name, title, start_time, duration=default_args['new_event_duration'], attendees=None):
         calendar_id = self._get_calendar_id(calendar_name)
-        body_start_time = datetime.strptime(start_time,"%Y-%m-%d %H:%M")
+        body_start_time = timezone(default_args['time_zone']).localize(datetime.strptime(start_time,"%Y-%m-%d %H:%M"))
         body_end_time = body_start_time + timedelta(minutes=duration)
 
         body = {
             'summary': title,
-            'start': {'dateTime':body_start_time.strftime(GCAL_DATE_FORMAT) },
-            'end': {'dateTime': body_end_time.strftime(GCAL_DATE_FORMAT) },
-            'attendees': {'email':attendee for attendee in attendees.split(',')}
+            'start': {'dateTime': body_start_time.isoformat(), 'timZone': default_args['time_zone']},
+            'end': {'dateTime': body_end_time.isoformat()},
+            'attendees': [{'email': attendee } for attendee in attendees.split(',')]
         }
+        print(body)
         self._service.events().insert(calendarId=calendar_id, body=body).execute()
 
 

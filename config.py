@@ -3,7 +3,8 @@
 __VERSION = "0.2"
 
 default_args = {
-    'new_event_duration': 210
+    'new_event_duration': 210,
+    'time_zone': 'Europe/Brussels'
 }
 
 # NEVER CHANGE THIS

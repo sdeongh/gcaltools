@@ -3,33 +3,33 @@ from utils import today_date
 from config import __VERSION, COLORS
 
 
-def cli_parser(calendar_manager):
+def cli_parser():
     parser = argparse.ArgumentParser()
     sub_parser = parser.add_subparsers(dest='command')
-    sub_parser_add(sub_parser, calendar_manager)
-    sub_parser_list(sub_parser, calendar_manager)
-    sub_parser_show(sub_parser, calendar_manager)
-    sub_parser_default(sub_parser, calendar_manager)
+    sub_parser_add(sub_parser)
+    sub_parser_list(sub_parser)
+    sub_parser_show(sub_parser)
+    sub_parser_default(sub_parser)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __VERSION)
     return parser
 
 
-def sub_parser_add(sub_parser, calendar_manager):
+def sub_parser_add(sub_parser):
     add_parser = sub_parser.add_parser('add', help="Add event to calendar")
     add_parser.add_argument('-c', '--calendar', type=str, help="Calendar name")
     add_parser.add_argument('title', type=str, help="Event title")
     add_parser.add_argument('start_date', type=str, help="Event start time, format: YYYY-MM-DD")
     add_parser.add_argument('start_time', type=str, help="Event start time, format: HH:MM")
-    add_parser.add_argument('-d', '--duration', type=int, help="Event duration (minutes) default: " + str(calendar_manager.get_default_event_duration()), default=calendar_manager.get_default_event_duration())
+    add_parser.add_argument('-d', '--duration', type=int, help="Event duration (minutes)")
     add_parser.add_argument('-a', '--attendees', type=str, help="List of emails of attendees", default="")
     add_parser.add_argument('-o', '--override-color', type=str, choices=[c for c in sorted(COLORS.keys())], help="List of emails of attendees", default="")
 
 
-def sub_parser_list(sub_parser, calendar_manager):
+def sub_parser_list(sub_parser):
     sub_parser.add_parser('list', help="Lists available calendars")
 
 
-def sub_parser_show(sub_parser, calendar_manager):
+def sub_parser_show(sub_parser):
     show_parser = sub_parser.add_parser('show', help="Displays calendar")
     display_group = show_parser.add_mutually_exclusive_group()
     display_group.add_argument('-w', action='store_true', help="Displays calendar for current week")
@@ -39,7 +39,7 @@ def sub_parser_show(sub_parser, calendar_manager):
     show_parser.add_argument('endDate', type=str, help="Last date to search for events", nargs="?")
 
 
-def sub_parser_default(sub_parser, calendar_manager):
+def sub_parser_default(sub_parser):
     default_parser = sub_parser.add_parser('default', help="Show user's default preferences")
     setting_group = default_parser.add_mutually_exclusive_group()
     setting_group.add_argument('-c', '--calendar', type=str, help="Set default calendar")

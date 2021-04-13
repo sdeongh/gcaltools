@@ -48,7 +48,6 @@ class CliCommand:
             color_name = command_args.override_color
         else:
             color_name = None
-
         self.calendar_manager.insert_event(active_calendar, command_args.title, command_args.start_date, command_args.start_time, duration, attendees, color_name)
 
     # gcaltools LIST command

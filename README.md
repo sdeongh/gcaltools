@@ -6,6 +6,7 @@ Google Calendar Python Command Line manager
 * oauth2client
 * pytz
 * pyyaml
+* prettytable
 
 ## Run
 ```

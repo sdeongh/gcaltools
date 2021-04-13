@@ -1,7 +1,7 @@
 from config import DATE_FORMAT
 from datetime import datetime, timedelta
 
-
+#UNUSED
 def rfc3339_to_datetime(rfc3339_string):
     return datetime.fromisoformat(rfc3339_string)
 

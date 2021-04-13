@@ -53,7 +53,7 @@ def sub_parser_add(sub_parser):
     add_parser.add_argument('start_date', type=valid_date, help="Event start time, format: YYYY-MM-DD")
     add_parser.add_argument('start_time', type=valid_time, help="Event start time, format: HH:MM")
     add_parser.add_argument('-d', '--duration', type=int, help="Event duration (minutes)")
-    add_parser.add_argument('-a', '--attendees', type=valid_attendees, help="List of emails of attendees", default="")
+    add_parser.add_argument('-a', '--attendees', type=valid_attendees, help="List of emails of attendees", required=False)
     add_parser.add_argument('-o', '--override-color', type=str, choices=[c for c in sorted(COLORS.keys())], help="List of emails of attendees", default="")
 
 

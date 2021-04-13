@@ -1,6 +1,5 @@
 from printer import calendar_list_printer, default_printer, events_printer
 from datetime import datetime, timedelta
-from config import DATE_FORMAT
 
 
 class CliCommand:
@@ -68,13 +67,11 @@ class CliCommand:
         if command_args.w:
             min_time = datetime.now() - timedelta(days=(datetime.now().weekday()))
             max_time = min_time + timedelta(days=6)
-            min_time, max_time = min_time.strftime(DATE_FORMAT), max_time.strftime(DATE_FORMAT)
 
         # Displays events for the current month
         if command_args.m:
             min_time = datetime.now().replace(day=1)
             max_time = min_time.replace(month=min_time.month + 1) - timedelta(days=1)
-            min_time, max_time = min_time.strftime(DATE_FORMAT), max_time.strftime(DATE_FORMAT)
 
         if command_args.calendar:
             active_calendar = command_args.calendar

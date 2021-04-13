@@ -1,8 +1,8 @@
 import os
 import yaml
 from googleapiclient import sample_tools
-from datetime import datetime, timedelta
-from config import DATE_FORMAT, GCAL_DATE_FORMAT, SCOPES, USER_PREFERENCES_FILE, DATETIME_FORMAT, COLORS
+from datetime import timedelta
+from config import SCOPES, USER_PREFERENCES_FILE, COLORS
 from pytz import timezone
 
 
@@ -90,9 +90,10 @@ class GoogleCalendarManager:
 
     def get_events(self, calendar_name, order_by=None, time_min=None, time_max=None, max_results=None):
         if time_max is not None:
-            time_max = (datetime.strptime(time_max, DATE_FORMAT) + timedelta(days=1)).strftime(GCAL_DATE_FORMAT)
+            time_max = timezone(self.get_default_timezone()).localize(time_max + timedelta(days=1)).isoformat()
         if time_min is not None:
-            time_min = datetime.strptime(time_min, DATE_FORMAT).strftime(GCAL_DATE_FORMAT)
+            time_min = timezone(self.get_default_timezone()).localize(time_min).isoformat()
+
         event_list = self._service.events().list(calendarId=self._get_calendar_id(calendar_name), orderBy=order_by, timeMin=time_min, timeMax=time_max, maxResults=max_results).execute()['items']
         return sorted(event_list, key=lambda e: event_start(e))
 
@@ -106,7 +107,7 @@ class GoogleCalendarManager:
         calendar_id = self._get_calendar_id(calendar_name)
         if duration is None:
             duration = self.get_default_event_duration()
-        body_start_time = timezone(self.get_default_timezone()).localize(datetime.strptime(' '.join((start_date, start_time)), DATETIME_FORMAT))
+        body_start_time = timezone(self.get_default_timezone()).localize(start_date + timedelta(hours=start_time.hour, minutes=start_time.minute))
         body_end_time = body_start_time + timedelta(minutes=duration)
 
         body = {
@@ -114,8 +115,9 @@ class GoogleCalendarManager:
             'start': {'dateTime': body_start_time.isoformat(), 'timZone': self.get_default_timezone()},
             'end': {'dateTime': body_end_time.isoformat()},
         }
+
         if attendees is not None:
-            body['attendees'] = [{'email': attendee} for attendee in attendees.split(',')]
+            body['attendees'] = [{'email': attendee} for attendee in attendees]
 
         if color_name is not None:
             body['colorId'] = COLORS[color_name]

@@ -1,18 +1,21 @@
 from datetime import datetime
+from prettytable import PrettyTable
 
 
 def calendar_list_printer(calendar_list):
-    print('')
-    print("| {:<30}|{}".format('CALENDAR', 'ID'))
-    print('+' + '-' * 31 + '+' + '-' * 31)
+    table = PrettyTable()
+    table.field_names = ["Calendar Name", "Calendar ID"]
     for cal in calendar_list:
-        print("| {:<30}| {}".format(cal['summary'], cal['id']))
+        table.add_row([cal['summary'], cal['id']])
+
+    table.padding_width = 2
+    table.align = "l"
+    print(table)
 
 
 def events_printer(event_list):
-    print('')
-    print("| {:<25} | {:<25} | {} ({})".format('Start Date', 'End Date', 'Title', 'Attendees'))
-    print("+" + "-"*27 + "+" + "-"*27 + "+" + "-"*27)
+    table = PrettyTable()
+    table.field_names = ["Start Date", "End Date", "Title", "Attendees"]
 
     for e in event_list:
         if 'date' in e['start'].keys():
@@ -21,15 +24,26 @@ def events_printer(event_list):
         else:
             start_date = datetime.fromisoformat(e['start']['dateTime']).strftime('%a %d %b %Y --- %H:%M')
             end_date = datetime.fromisoformat(e['end']['dateTime']).strftime('%a %d %b %Y --- %H:%M')
-        event_string = "| {:<25} | {:<25} | {}".format(start_date, end_date, e['summary'],)
 
-        if 'attendees' in e.keys():
-            event_string += " - ({})".format(", ".join([att['email'] for att in e['attendees']]))
+        if "attendees" in e.keys():
+            attendees_string = ", ".join([att['email'] for att in e['attendees']])
+        else:
+            attendees_string = "n/a"
 
-        print(event_string)
+        table.add_row([start_date, end_date, e['summary'], attendees_string])
+
+    table.padding_width = 2
+    table.align = "l"
+    print(table)
 
 
 def default_printer(user_preferences):
-    print('')
+    table = PrettyTable()
+    table.field_names = ["Setting", "Value"]
+
     for setting in sorted(user_preferences.keys()):
-        print("{}: {}".format(setting, user_preferences[setting]))
+        table.add_row([setting, user_preferences[setting]])
+
+    table.padding_width = 2
+    table.align = "l"
+    print(table)

@@ -35,4 +35,3 @@ optional arguments:
 - [ ] Search for events
 - [ ] Check for overlapping events based on attendees list
 - [ ] Add events template for faster creation
--

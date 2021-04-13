@@ -47,6 +47,13 @@ class GoogleCalendarManager:
         self._preferences[setting] = value
         self._save_user_preferences()
 
+    def reset_user_preferences(self):
+        if os.path.exists('.gcaltools'):
+            os.remove('.gcaltools')
+            self.reload()
+        else:
+            print('WARNING: .gcaltools not found, nothing to delete!')
+
     def get_default_calendar(self):
         return self._preferences['default_calendar']
 

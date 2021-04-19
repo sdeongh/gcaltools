@@ -65,12 +65,13 @@ class CliCommand:
 
         # Displays events for the current week
         if command_args.w:
-            min_time = datetime.now() - timedelta(days=(datetime.now().weekday()))
+            print(datetime.now().weekday())
+            min_time = (datetime.now() - timedelta(days=(datetime.now().weekday()))).replace(hour=0, minute=0, second=0)
             max_time = min_time + timedelta(days=6)
 
         # Displays events for the current month
         if command_args.m:
-            min_time = datetime.now().replace(day=1)
+            min_time = datetime.now().replace(day=1, hour=0, minute=0, second=0)
             max_time = min_time.replace(month=min_time.month + 1) - timedelta(days=1)
 
         if command_args.calendar:

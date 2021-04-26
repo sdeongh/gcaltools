@@ -82,7 +82,7 @@ class CliCommand:
                 print('ERROR: default calendar not set')
                 exit()
 
-        events_printer(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=None))
+        events_printer(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000))
 
     def _command_default(self, command_args):
         if command_args.calendar:

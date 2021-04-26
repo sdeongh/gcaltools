@@ -38,12 +38,17 @@ def valid_attendees(attendees_string):
 def cli_parser():
     parser = argparse.ArgumentParser()
     sub_parser = parser.add_subparsers(dest='command')
+    sub_parser_auth(sub_parser)
     sub_parser_add(sub_parser)
     sub_parser_list(sub_parser)
     sub_parser_show(sub_parser)
     sub_parser_default(sub_parser)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __VERSION)
     return parser
+
+
+def sub_parser_auth(sub_parser):
+    sub_parser.add_parser('remoteauth', help="Google API Auth without local webserver.")
 
 
 def sub_parser_add(sub_parser):

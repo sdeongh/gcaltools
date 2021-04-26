@@ -13,14 +13,17 @@ def event_start(event):
         return event['start']['dateTime']
 
 
-def _create_service():
-    return sample_tools.init('', 'calendar', 'v3', __doc__, __file__, scope=SCOPES)
+def _create_service(noauth_local_webserver=False):
+    args = ['']
+    if noauth_local_webserver:
+        args.append('--noauth_local_webserver')
+    return sample_tools.init(args, 'calendar', 'v3', __doc__, __file__, scope=SCOPES)
 
 
 class GoogleCalendarManager:
-    def __init__(self, use_api=True):
+    def __init__(self, use_api=True, remote_auth=False):
         if use_api:
-            self._service, self._flags = _create_service()
+            self._service, self._flags = _create_service(noauth_local_webserver=remote_auth)
             self._calendars = self._get_calendars()['items']
         self._load_user_preferences()
 

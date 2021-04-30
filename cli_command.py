@@ -112,8 +112,6 @@ class CliCommand:
 
     # gcaltools REPORT command
     def _command_report(self, command_args):
-        print(command_args)
-
         if command_args.calendar:
             active_calendar = command_args.calendar
         else:

@@ -1,6 +1,6 @@
 # General variables
 
-__VERSION = "0.4.2"
+__VERSION = "0.5.0"
 
 
 # NEVER CHANGE THIS

@@ -42,6 +42,7 @@ def cli_parser():
     sub_parser_add(sub_parser)
     sub_parser_list(sub_parser)
     sub_parser_show(sub_parser)
+    sub_parser_report(sub_parser)
     sub_parser_default(sub_parser)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __VERSION)
     return parser
@@ -49,6 +50,16 @@ def cli_parser():
 
 def sub_parser_auth(sub_parser):
     sub_parser.add_parser('remoteauth', help="Google API Auth without local webserver.")
+
+
+def sub_parser_report(sub_parser):
+    report_parser = sub_parser.add_parser('report', help="Generates month occupation reports based on event attendees")
+    report_parser.add_argument('-c', '--calendar', type=str, help="Calendar name")
+    report_parser.add_argument('-m', '--month', type=int, help="Month")
+    report_parser.add_argument('-y', '--year', type=int, help="Year")
+    report_parser.add_argument('-o', '--outputformat', type=int, help="Report output format (not yet implemented)")
+    report_parser.add_argument('-f', '--filename', type=str, help="Name for the output file")
+    report_parser.add_argument('-a', '--attendees_catalog', type=str, help="Catalog of attendees mapping email with names for report generation")
 
 
 def sub_parser_add(sub_parser):
@@ -83,3 +94,4 @@ def sub_parser_default(sub_parser):
     setting_group.add_argument('-d', '--duration', type=int, help="Set default event duration")
     setting_group.add_argument('-r', '--reset', help="Erase .gcaltools file (resets all user preferences)", action="store_true")
     setting_group.add_argument('-t', '--timezone', type=str, help="Set default time zone (IANA format ie: \"Europe/Brussels\")")
+    setting_group.add_argument('-a', '--attendees_catalog', type=str, help="Catalog of attendees mapping email with names for report generation")

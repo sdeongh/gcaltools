@@ -1,5 +1,7 @@
 from printer import calendar_list_printer, default_printer, events_printer
+from reporter import xlsx_report, md_report
 from datetime import datetime, timedelta
+from calendar import monthrange
 
 
 class CliCommand:
@@ -18,6 +20,8 @@ class CliCommand:
             self._command_default(command_args)
         elif cli_command == 'list':
             self._command_list()
+        elif cli_command == 'report':
+            self._command_report(command_args)
         elif cli_command == 'show':
             self._command_show(command_args)
         else:
@@ -84,6 +88,7 @@ class CliCommand:
 
         events_printer(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000))
 
+    # gcaltools DEFAULT command
     def _command_default(self, command_args):
         if command_args.calendar:
             if self.calendar_manager.calender_exists(command_args.calendar):
@@ -97,7 +102,41 @@ class CliCommand:
         if command_args.timezone:
             self.calendar_manager.set_default_timezone(command_args.timezone)
 
+        if command_args.attendees_catalog:
+            self.calendar_manager.set_attendees_catalog(command_args.attendees_catalog)
+
         if command_args.reset:
             self.calendar_manager.reset_user_preferences()
 
         default_printer(self.calendar_manager.get_user_preferences())
+
+    # gcaltools REPORT command
+    def _command_report(self, command_args):
+        print(command_args)
+
+        if command_args.calendar:
+            active_calendar = command_args.calendar
+        else:
+            active_calendar = self.calendar_manager.get_default_calendar()
+            if active_calendar is None:
+                print('ERROR: default calendar not set')
+                exit()
+
+        active_year = command_args.year if command_args.year is not None else datetime.now().year
+        active_month = command_args.month if command_args.month is not None else datetime.now().month
+
+        min_time = datetime(year=active_year, month=active_month, day=1)
+        max_time = min_time.replace(day=monthrange(min_time.year, min_time.month)[1], hour=23, minute=59, second=59)
+
+        attendees_catalog = command_args.attendees_catalog if command_args.attendees_catalog is not None else self.calendar_manager.get_attendees_catalog()
+
+        default_filename = "{}_{}_{}".format(active_calendar, min_time.strftime("%Y%m%d"), max_time.strftime("%Y%m%d"))
+
+        report_filename = command_args.filename if command_args.filename is not None else default_filename
+
+        if command_args.outputformat == "md":
+            file_extension = ".md"
+            md_report(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000), report_filename + file_extension, active_year, active_month, attendees_catalog)
+        else:
+            file_extension = ".xlsx"
+            xlsx_report(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000), report_filename + file_extension, active_year, active_month, attendees_catalog)

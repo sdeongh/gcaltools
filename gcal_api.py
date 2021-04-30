@@ -66,6 +66,9 @@ class GoogleCalendarManager:
     def get_default_event_duration(self):
         return self._preferences['default_duration']
 
+    def get_attendees_catalog(self):
+        return self._preferences['attendees_catalog']
+
     def set_default_event_duration(self, duration):
         self._set_user_preference('default_duration', duration)
 
@@ -74,6 +77,9 @@ class GoogleCalendarManager:
 
     def set_default_timezone(self, time_zone):
         self._set_user_preference('default_timezone', time_zone)
+
+    def set_attendees_catalog(self, attendees_catalog):
+        self._set_user_preference('attendees_catalog', attendees_catalog)
 
     def get_user_preferences(self):
         return self._preferences

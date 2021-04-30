@@ -7,16 +7,19 @@ Google Calendar Python Command Line manager
 * pytz
 * pyyaml
 * prettytable
+* xlsxwriter
 
 ## Run
 ```
-usage: gcaltools.py [-h] [-v] {add,list,show,default} ...
+usage: gcaltools.py [-h] [-v] {remoteauth,add,list,show,report,default} ...
 
 positional arguments:
-  {add,list,show,default}
+  {remoteauth,add,list,show,report,default}
+    remoteauth          Google API Auth without local webserver.
     add                 Add event to calendar
     list                Lists available calendars
     show                Displays calendar
+    report              Generates month occupation reports based on event attendees
     default             Show user's default preferences
 
 optional arguments:
@@ -36,3 +39,5 @@ optional arguments:
 - [ ] Search for events
 - [ ] Check for overlapping events based on attendees list
 - [ ] Add events template for faster creation
+- [x] Generate monthly report based on event attendees (XLSX format)
+- [ ] Generate monthly report based on event attendees (MarkDown format)

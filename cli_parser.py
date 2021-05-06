@@ -44,12 +44,21 @@ def cli_parser():
     sub_parser_show(sub_parser)
     sub_parser_report(sub_parser)
     sub_parser_default(sub_parser)
+    sub_parser_summary(sub_parser)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __VERSION)
     return parser
 
 
 def sub_parser_auth(sub_parser):
     sub_parser.add_parser('remoteauth', help="Google API Auth without local webserver.")
+
+
+def sub_parser_summary(sub_parser):
+    summary_parser = sub_parser.add_parser('summary', help="Display events summary for given calendar.")
+    summary_parser.add_argument('-c', '--calendar', type=str, help="Calendar name")
+    # TO DO : defining start and end date of the summary
+    # summary_parser.add_argument('-s', '--start_date', type=valid_date, help="Summary first day, format: YYYY-MM-DD")
+    # summary_parser.add_argument('-e', '--end_date', type=valid_date, help="Summary last day, format: YYYY-MM-DD")
 
 
 def sub_parser_report(sub_parser):

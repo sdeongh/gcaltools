@@ -83,5 +83,5 @@ def xlsx_report(event_list, filename, year, month, attendees_catalog=None):
 
 
 # TO DO
-def md_report(event_list, filename, year, month, attendees_catalog=None):
-    pass
+# def md_report(event_list, filename, year, month, attendees_catalog=None):
+#    pass

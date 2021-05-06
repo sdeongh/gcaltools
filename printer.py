@@ -47,3 +47,18 @@ def default_printer(user_preferences):
     table.padding_width = 2
     table.align = "l"
     print(table)
+
+
+def summary_printer(calendar_name, calendar_summary):
+    table = PrettyTable()
+    table.field_names = ["Information", "Count"]
+
+    for information in sorted(calendar_summary.keys()):
+        table.add_row([information, calendar_summary[information]])
+
+    table.padding_width = 2
+    table.align = "l"
+
+    print()
+    print("Events summary for {}".format(calendar_name))
+    print(table)

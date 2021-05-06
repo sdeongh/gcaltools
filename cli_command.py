@@ -1,7 +1,8 @@
-from printer import calendar_list_printer, default_printer, events_printer
-from reporter import xlsx_report, md_report
+from printer import calendar_list_printer, default_printer, events_printer, summary_printer
+from reporter import xlsx_report
 from datetime import datetime, timedelta
 from calendar import monthrange
+from config import COLORS
 
 
 class CliCommand:
@@ -24,6 +25,8 @@ class CliCommand:
             self._command_report(command_args)
         elif cli_command == 'show':
             self._command_show(command_args)
+        elif cli_command == 'summary':
+            self._command_summary(command_args)
         else:
             pass
 
@@ -133,8 +136,29 @@ class CliCommand:
         report_filename = command_args.filename if command_args.filename is not None else default_filename
 
         if command_args.outputformat == "md":
-            file_extension = ".md"
-            md_report(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000), report_filename + file_extension, active_year, active_month, attendees_catalog)
+            pass
+            # file_extension = ".md"
+            # md_report(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000), report_filename + file_extension, active_year, active_month, attendees_catalog)
         else:
             file_extension = ".xlsx"
             xlsx_report(self.calendar_manager.get_events(active_calendar, time_min=min_time, time_max=max_time, max_results=1000), report_filename + file_extension, active_year, active_month, attendees_catalog)
+
+    # gcaltools SUMMARY command
+    def _command_summary(self, command_args):
+        if command_args.calendar:
+            active_calendar = command_args.calendar
+        else:
+            active_calendar = self.calendar_manager.get_default_calendar()
+            if active_calendar is None:
+                print('ERROR: default calendar not set')
+                exit()
+
+        calendar_summary = {}
+
+        events = self.calendar_manager.get_events(active_calendar, time_min=None, time_max=None, max_results=1000)
+
+        calendar_summary['Training days with trainer'] = len([e for e in events if 'attendees' in e.keys()])/2
+        calendar_summary['Training days without trainer'] = len([e for e in events if 'attendees' not in e.keys() and ('colorId' not in e.keys() or ('colorId' in e.keys() and int(e['colorId'])) != COLORS['graphite'])])/2
+        calendar_summary['Total training days'] = len([e for e in events if 'colorId' not in e.keys() or int(e['colorId']) != COLORS['graphite']])/2
+
+        summary_printer(active_calendar, calendar_summary)

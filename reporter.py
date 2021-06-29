@@ -25,7 +25,6 @@ def parse_events(events_list):
                 event_attendees.append(attendee['email'])
                 if attendee['email'] not in attendees_list:
                     attendees_list.append(attendee['email'])
-
         start = datetime.fromisoformat(event['start']['dateTime'])
         end = datetime.fromisoformat(event['end']['dateTime'])
         event_day = start.strftime("%Y/%m/%d")
@@ -35,7 +34,10 @@ def parse_events(events_list):
             events[event_day] = {a: event_duration if a in event_attendees else 0 for a in attendees_list}
         else:
             for a in event_attendees:
-                events[event_day][a] = events[event_day][a] + event_duration
+                if a in events[event_day]:
+                    events[event_day][a] = events[event_day][a] + event_duration
+                else:
+                    events[event_day][a] = event_duration
 
     return events, sorted(attendees_list)
 

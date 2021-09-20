@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 #  Google Calendar TOOLS
 #
 #  Google calendar management tool

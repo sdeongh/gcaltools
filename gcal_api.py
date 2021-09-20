@@ -1,6 +1,6 @@
 import os
 import yaml
-from googleapiclient import sample_tools
+import gcal_tool
 from datetime import timedelta
 from config import SCOPES, USER_PREFERENCES_FILE, COLORS
 from pytz import timezone
@@ -17,10 +17,13 @@ def _create_service(noauth_local_webserver=False):
     args = ['']
     if noauth_local_webserver:
         args.append('--noauth_local_webserver')
-    return sample_tools.init(args, 'calendar', 'v3', __doc__, __file__, scope=SCOPES)
+    return gcal_tool.init(args, 'calendar', 'v3', __doc__, __file__, scope=SCOPES)
 
 
 class GoogleCalendarManager:
+
+    defaults_file_path = os.path.join(os.path.expanduser('~'),'.gcaltools/.defaults')
+
     def __init__(self, use_api=True, remote_auth=False):
         if use_api:
             self._service, self._flags = _create_service(noauth_local_webserver=remote_auth)
@@ -28,8 +31,8 @@ class GoogleCalendarManager:
         self._load_user_preferences()
 
     def _load_user_preferences(self):
-        if os.path.exists(USER_PREFERENCES_FILE):
-            with open(USER_PREFERENCES_FILE) as file:
+        if os.path.exists(self.defaults_file_path):
+            with open(self.defaults_file_path) as file:
                 self._preferences = yaml.load(file, Loader=yaml.FullLoader)
         else:
             self._preferences = {
@@ -43,7 +46,7 @@ class GoogleCalendarManager:
         self._load_user_preferences()
 
     def _save_user_preferences(self):
-        with open(USER_PREFERENCES_FILE, 'w') as file:
+        with open(defaults_file_path, 'w') as file:
             yaml.dump(self._preferences, file)
 
     def _set_user_preference(self, setting, value):
@@ -51,11 +54,11 @@ class GoogleCalendarManager:
         self._save_user_preferences()
 
     def reset_user_preferences(self):
-        if os.path.exists('.gcaltools'):
-            os.remove('.gcaltools')
+        if os.path.exists(self.defaults_file_path):
+            os.remove(defaults_file_path)
             self.reload()
         else:
-            print('WARNING: .gcaltools not found, nothing to delete!')
+            print('WARNING: defaults not found, nothing to delete!')
 
     def get_default_calendar(self):
         return self._preferences['default_calendar']

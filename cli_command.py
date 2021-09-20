@@ -72,7 +72,6 @@ class CliCommand:
 
         # Displays events for the current week
         if command_args.w:
-            print(datetime.now().weekday())
             min_time = (datetime.now() - timedelta(days=(datetime.now().weekday()))).replace(hour=0, minute=0, second=0)
             max_time = min_time + timedelta(days=6)
 

@@ -46,7 +46,7 @@ class GoogleCalendarManager:
         self._load_user_preferences()
 
     def _save_user_preferences(self):
-        with open(defaults_file_path, 'w') as file:
+        with open(self.defaults_file_path, 'w') as file:
             yaml.dump(self._preferences, file)
 
     def _set_user_preference(self, setting, value):
@@ -55,7 +55,7 @@ class GoogleCalendarManager:
 
     def reset_user_preferences(self):
         if os.path.exists(self.defaults_file_path):
-            os.remove(defaults_file_path)
+            os.remove(self.defaults_file_path)
             self.reload()
         else:
             print('WARNING: defaults not found, nothing to delete!')

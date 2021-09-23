@@ -2,7 +2,7 @@ import os
 import yaml
 import gcal_tool
 from datetime import timedelta
-from config import SCOPES, USER_PREFERENCES_FILE, COLORS
+from config import SCOPES, COLORS
 from pytz import timezone
 
 
